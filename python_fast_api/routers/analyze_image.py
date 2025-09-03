@@ -8,5 +8,8 @@ router = APIRouter()
 @router.post("/analyze_image")
 async def analyze_image(request:Request, file:UploadFile):
     # Current place holder for business logic. 
-    print(request.pose_estimator) # Gets the model from main application instance
+    results = request.app.state.pose_estimator(file.file)
+    for result in results:
+        xy = result.keypoints.xy
+
     return {"filename":file.filename}
