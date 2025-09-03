@@ -9,6 +9,8 @@ readme = "README.md"
 python = "^3.12"
 fastapi = {extras = ["standard"], version = "^0.116.1"}
 ariadne = "^0.26.2"
+python-multipart = "^0.0.20"
+ultralytics = "^8.3.192"
 
 
 [build-system]
