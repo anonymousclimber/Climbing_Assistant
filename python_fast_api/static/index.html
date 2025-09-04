@@ -24,7 +24,7 @@
   <body>
     <div class="container">
       <h1>Upload an Image</h1>
-      <p>Select a photo from your device or use your camera, then submit to analyze.</p>
+      <p>Select a photo from your device or use your camera, then submit to analyze. Ensure the image is a png, jpg, or jpeg image</p>
       <div class="card">
         <form id="upload-form">
           <div class="row">
@@ -40,6 +40,10 @@
       </div>
       <div class="card">
         <div id="output" class="output">Response will appear here.</div>
+        <img id="result-image" class="preview" alt="Result" style="margin-top:12px; display:none;" />
+        <div class="row" id="download-row" style="display:none; margin-top:8px;">
+          <a id="download-link" download="output.jpg">Download result</a>
+        </div>
       </div>
     </div>
     <script>
@@ -82,12 +86,23 @@
           const data = new FormData();
           data.append('file', file);
           const res = await fetch('/analyze_image', { method: 'POST', body: data });
-          const text = await res.text();
-          try {
-            const json = JSON.parse(text);
-            output.textContent = JSON.stringify(json, null, 2);
-          } catch {
+          const contentType = res.headers.get('content-type') || '';
+          if (contentType.includes('image/')) {
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            output.textContent = 'Analysis complete. See result image below.';
+            const resultImg = document.getElementById('result-image');
+            const dlRow = document.getElementById('download-row');
+            const dlLink = document.getElementById('download-link');
+            resultImg.src = url;
+            resultImg.style.display = 'block';
+            dlRow.style.display = 'flex';
+            dlLink.href = url;
+          } else {
+            const text = await res.text();
             output.textContent = text;
+            document.getElementById('result-image').style.display = 'none';
+            document.getElementById('download-row').style.display = 'none';
           }
         } catch (err) {
           output.textContent = 'Error: ' + (err && err.message ? err.message : String(err));
