@@ -31,7 +31,7 @@ RUN poetry install --only main --no-ansi
 
 # Copy the application code and model weights
 COPY python_fast_api ./python_fast_api
-wget -P "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11x-pose.pt" ./
+wget -P "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt" ./
 
 # Cloud Run expects the service to listen on $PORT; default to 8080
 ENV PORT=8080
