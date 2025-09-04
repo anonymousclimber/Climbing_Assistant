@@ -11,6 +11,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # System dependencies for OpenCV/Ultralytics and building wheels
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    wget \
+    ca-certificates \
     ffmpeg \
     libsm6 \
     libxext6 \
@@ -29,9 +31,10 @@ COPY pyproject.toml poetry.lock ./
 # Install Python dependencies (no dev deps). Poetry installs to the global env due to POETRY_VIRTUALENVS_CREATE=false
 RUN poetry install --only main --no-ansi
 
-# Copy the application code and model weights
+# Copy the application code
 COPY python_fast_api ./python_fast_api
-wget -P "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt" ./
+# Download model weights during build
+RUN wget -O yolo11n-pose.pt "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt"
 
 # Cloud Run expects the service to listen on $PORT; default to 8080
 ENV PORT=8080
