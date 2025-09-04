@@ -14,9 +14,9 @@ async def analyze_image(request: Request, file: UploadFile = File(...)):
     decoded_image = cv2.imdecode(np.frombuffer(image_bytes, np.uint8),cv2.IMREAD_COLOR)
     
     results = request.app.state.pose_estimator(decoded_image)
-
+    annotated_image = results[0].plot()
     # Encode the (possibly annotated) image as JPEG using OpenCV to avoid imageio warnings
-    success, encoded = cv2.imencode('.jpg', decoded_image)
+    success, encoded = cv2.imencode('.jpg', annotated_image)
     if not success:
         return Response("Failed to encode image", status_code=500)
 
